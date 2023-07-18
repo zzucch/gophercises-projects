@@ -39,7 +39,7 @@ func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.Handl
 // a mapping of paths to urls.
 func YAMLHandler(yml []byte, fallback http.Handler) (http.HandlerFunc, error) {
 	var mappers []URLMapper
-	if err := yaml.Unmarshal(yml, mappers); err != nil {
+	if err := yaml.Unmarshal(yml, &mappers); err != nil {
 		return nil, err
 	}
 
