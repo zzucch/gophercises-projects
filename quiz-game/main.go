@@ -31,35 +31,28 @@ func main() {
 	totalQuestions := len(records)
 	answeredCorrect := 0
 
-	exit := make(chan bool)
+	after := time.After(10 * time.Second)
 
-	timer := time.NewTimer(1 * time.Second)
 	go func() {
-		<-timer.C
-		exit <- true
+		for _, record := range records {
+			fmt.Println("Type the answer for:", record[0])
+			var givenAnswer int
+			_, _ = fmt.Scan(&givenAnswer)
+			correctAnswer, err3 := strconv.Atoi(record[1])
+			if err3 != nil {
+				log.Fatal(err3)
+			}
+
+			if givenAnswer == correctAnswer {
+				answeredCorrect++
+			}
+		}
 	}()
 
-	for _, record := range records {
-		fmt.Println("Type the answer for: ", record[0])
-		var givenAnswer int
-		_, _ = fmt.Scan(&givenAnswer)
-		correctAnswer, err3 := strconv.Atoi(record[1])
-		if err3 != nil {
-			log.Fatal(err3)
-		}
-
-		select {
-		case <-exit:
-			fmt.Println("Time is over!")
-			fmt.Println("You answered ", answeredCorrect, " questions out of ", totalQuestions, " correctly.")
-		default:
-
-		}
-
-		if givenAnswer == correctAnswer {
-			answeredCorrect++
-		}
+	select {
+	case <-after:
+		fmt.Println("Time is over!")
 	}
 
-	fmt.Println("You answered ", answeredCorrect, " questions out of ", totalQuestions, " correctly.")
+	fmt.Println("You answered", answeredCorrect, "questions out of", totalQuestions, "correctly.")
 }
